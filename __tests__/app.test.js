@@ -50,3 +50,41 @@ describe("GET /api/topics", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id", () => {
+  test("200: Responds with an article object with the right properties", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0]).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          body: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+
+  test("404: when passed a valid article_id but article does not exist", () => {
+    return request(app)
+      .get("/api/articles/1000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article_id 1000 not found");
+      });
+  });
+
+  test("400: when passed an invalid article_id", () => {
+    return request(app)
+      .get("/api/articles/mountain")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+});
