@@ -23,3 +23,30 @@ describe("GET /api", () => {
       });
   });
 });
+
+describe("GET /api/topics", () => {
+  test("200: Responds with an array of topic objects, each of which should have a slug and a description property", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body: { topics } }) => {
+        expect(Array.isArray(topics)).toBe(true);
+        expect(topics).toHaveLength(3);
+        topics.forEach((topic) => {
+          expect(topic).toMatchObject({
+            slug: expect.any(String),
+            description: expect.any(String),
+          });
+        });
+      });
+  });
+
+  test("404: when trying to access a non-existent end point ", () => {
+    return request(app)
+      .get("/api/topicazo")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
+});
