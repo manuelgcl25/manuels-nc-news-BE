@@ -5,6 +5,7 @@ const {
   getTopics,
   getArticleById,
   getArticles,
+  getArticleComments,
 } = require("./controllers/api.controller");
 
 app.get("/api", getApis);
@@ -14,6 +15,8 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles", getArticles);
+
+app.get("/api/articles/:article_id/comments", getArticleComments);
 
 app.all("/*splat", (req, res, next) => {
   next({ status: 404, msg: "Not found" });

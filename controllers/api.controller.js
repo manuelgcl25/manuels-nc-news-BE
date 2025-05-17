@@ -4,6 +4,7 @@ const {
   selectTopics,
   selectArticleById,
   selectArticles,
+  selectArticleComments,
 } = require("../models/apis.model");
 
 async function getApis(req, res, next) {
@@ -43,4 +44,20 @@ async function getArticles(req, res, next) {
   }
 }
 
-module.exports = { getApis, getTopics, getArticleById, getArticles };
+async function getArticleComments(req, res, next) {
+  try {
+    const { article_id } = req.params;
+    const articleComments = await selectArticleComments(article_id);
+    res.status(200).send({ articleComments });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = {
+  getApis,
+  getTopics,
+  getArticleById,
+  getArticles,
+  getArticleComments,
+};

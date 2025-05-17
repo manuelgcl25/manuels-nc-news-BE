@@ -41,4 +41,25 @@ async function selectArticles() {
   return rows;
 }
 
-module.exports = { selectTopics, selectArticleById, selectArticles };
+async function selectArticleComments(articleId) {
+  const { rows } = await db.query(
+    `
+    SELECT *  FROM comments WHERE article_id = $1 ORDER BY created_at DESC;
+    `,
+    [articleId]
+  );
+  if (rows.length === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: `No comments found for article with id ${articleId}`,
+    });
+  }
+  return rows;
+}
+
+module.exports = {
+  selectTopics,
+  selectArticleById,
+  selectArticles,
+  selectArticleComments,
+};
