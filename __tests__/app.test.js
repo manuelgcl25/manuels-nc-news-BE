@@ -125,8 +125,81 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        console.log(body.articles);
         expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: Responds with array of comments for the given article_id", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articleComments).toHaveLength(11);
+        expect(body.articleComments[0]).toMatchObject({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          article_id: expect.any(Number),
+        });
+      });
+  });
+
+  test("200: Responds with recent comments first", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articleComments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+
+  test("200: Responds with the right key pair values for a certain article_id", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articleComments).toEqual([
+          {
+            comment_id: 15,
+            body: "I am 100% sure that we're not completely sure.",
+            votes: 1,
+            author: "butter_bridge",
+            created_at: "2020-11-24T00:08:00.000Z",
+            article_id: 5,
+          },
+          {
+            comment_id: 14,
+            body: "What do you see? I have no idea where this will lead us. This place I speak of, is known as the Black Lodge.",
+            votes: 16,
+            author: "icellusedkars",
+            created_at: "2020-06-09T05:00:00.000Z",
+            article_id: 5,
+          },
+        ]);
+      });
+  });
+
+  test("404: when passed a valid article_id but article does not exist", () => {
+    return request(app)
+      .get("/api/articles/5000/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No comments found for article with id 5000");
+      });
+  });
+
+  test("400: when passed an invalid article_id", () => {
+    return request(app)
+      .get("/api/articles/cat/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
       });
   });
 });
