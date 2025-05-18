@@ -5,6 +5,7 @@ const {
   selectArticleById,
   selectArticles,
   selectArticleComments,
+  insertArticleComment,
 } = require("../models/apis.model");
 
 async function getApis(req, res, next) {
@@ -54,10 +55,29 @@ async function getArticleComments(req, res, next) {
   }
 }
 
+async function postArticleComment(req, res, next) {
+  try {
+    const { article_id } = req.params;
+    const { username, body } = req.body;
+    if (body.length === 0) {
+      return res.status(400).json({ msg: "Comment body empty" });
+    }
+    const articleComment = await insertArticleComment(
+      username,
+      body,
+      article_id
+    );
+    res.status(201).send({ articleComment });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getApis,
   getTopics,
   getArticleById,
   getArticles,
   getArticleComments,
+  postArticleComment,
 };
