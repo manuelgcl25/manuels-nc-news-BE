@@ -57,9 +57,18 @@ async function selectArticleComments(articleId) {
   return rows;
 }
 
+async function insertArticleComment(username, body, articleId) {
+  const { rows } = await db.query(
+    `INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *`,
+    [username, body, articleId]
+  );
+  return rows[0];
+}
+
 module.exports = {
   selectTopics,
   selectArticleById,
   selectArticles,
   selectArticleComments,
+  insertArticleComment,
 };

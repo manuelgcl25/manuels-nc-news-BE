@@ -203,3 +203,62 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe.only("POST /api/articles/:article_id/comments", () => {
+  test("201: Responds with a 201 status and responds with newly posted comment", () => {
+    const postObj = {
+      username: "rogersop",
+      body: "This is a test comment",
+    };
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(postObj)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.articleComment).toEqual({
+          comment_id: expect.any(Number),
+          body: "This is a test comment",
+          votes: expect.any(Number),
+          author: "rogersop",
+          created_at: expect.any(String),
+          article_id: 5,
+        });
+      });
+  });
+  test("404; Responds 'User or article not found' when article doesn't exisit in the database", () => {
+    return request(app)
+      .post("/api/articles/100/comments")
+      .send({
+        username: "butter_bridge",
+        body: "what does this mean for bananas?",
+      })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("User or article not found");
+      });
+  });
+  test("404; Responds 'User or article not found' when user doesn't exisit in the database", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "banana",
+        body: "what does this mean for bananas?",
+      })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("User or article not found");
+      });
+  });
+  test("400; Responds 'Comment body empty' when body is empty", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "butter_bridge",
+        body: "",
+      })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Comment body empty");
+      });
+  });
+});
