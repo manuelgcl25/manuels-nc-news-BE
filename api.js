@@ -8,6 +8,7 @@ const {
   getArticleComments,
   postArticleComment,
   patchArticleById,
+  deleteCommentById,
 } = require("./controllers/api.controller");
 
 app.use(express.json());
@@ -25,6 +26,8 @@ app.get("/api/articles/:article_id/comments", getArticleComments);
 app.post("/api/articles/:article_id/comments", postArticleComment);
 
 app.patch("/api/articles/:article_id", patchArticleById);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("/*splat", (req, res, next) => {
   next({ status: 404, msg: "Not found" });
