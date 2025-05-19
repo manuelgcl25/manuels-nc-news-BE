@@ -407,7 +407,7 @@ describe("GET /api/articles?sort_by=''&order=''", () => {
   });
 });
 
-describe.only("GET /api/articles?topic=''", () => {
+describe("GET /api/articles?topic=''", () => {
   test("status 200: Responds with a list of articles of the URL topic", () => {
     return request(app)
       .get("/api/articles?topic=cats")

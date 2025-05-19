@@ -35,11 +35,9 @@ async function selectArticles(
     "votes",
   ];
   const allowedOrder = ["asc", "desc"];
-  // const allowedTopic = ["cats", "mitch", "paper"];
   if (
     !allowedSorts.includes(sortBy) ||
     !allowedOrder.includes(order.toLowerCase())
-    // (topic && !allowedTopic.includes(topic.toLowerCase()))
   ) {
     return Promise.reject({ status: 400, msg: "Invalid sorting field" });
   }
