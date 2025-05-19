@@ -6,6 +6,7 @@ const {
   selectArticles,
   selectArticleComments,
   insertArticleComment,
+  updateArticleById,
 } = require("../models/apis.model");
 
 async function getApis(req, res, next) {
@@ -73,6 +74,28 @@ async function postArticleComment(req, res, next) {
   }
 }
 
+async function patchArticleById(req, res, next) {
+  try {
+    const { article_id } = req.params;
+    const { inc_votes } = req.body;
+
+    if (!inc_votes || typeof inc_votes !== "number") {
+      return res.status(400).send({ msg: "Invalid votes format" });
+    }
+
+    const article = await updateArticleById(inc_votes, article_id);
+
+    if (!article) {
+      return res.status(404).send({ msg: "Article not found" });
+    }
+
+    res.status(200).send({ article });
+    res.status(200).send({ article });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getApis,
   getTopics,
@@ -80,4 +103,5 @@ module.exports = {
   getArticles,
   getArticleComments,
   postArticleComment,
+  patchArticleById,
 };

@@ -65,10 +65,23 @@ async function insertArticleComment(username, body, articleId) {
   return rows[0];
 }
 
+async function updateArticleById(voteIncrement, articleId) {
+  console.log(voteIncrement, articleId);
+  const { rows } = await db.query(
+    `
+    UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *
+    `,
+    [voteIncrement, articleId]
+  );
+  console.log(rows);
+  return rows[0];
+}
+
 module.exports = {
   selectTopics,
   selectArticleById,
   selectArticles,
   selectArticleComments,
   insertArticleComment,
+  updateArticleById,
 };
