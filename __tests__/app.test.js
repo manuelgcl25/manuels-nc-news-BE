@@ -406,3 +406,33 @@ describe("GET /api/articles?sort_by=''&order=''", () => {
       });
   });
 });
+
+describe.only("GET /api/articles?topic=''", () => {
+  test("status 200: Responds with a list of articles of the URL topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(1);
+        expect(body.articles[0]).toMatchObject({
+          author: "rogersop",
+          title: "UNCOVERED: catspiracy to bring down democracy",
+          article_id: 5,
+          topic: "cats",
+          created_at: "2020-08-03T13:14:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: 2,
+        });
+      });
+  });
+  test("status 404: when topic does not exist in out db", () => {
+    return request(app)
+      .get("/api/articles?topic=nonExistingTopic")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No articles found for those filters");
+      });
+  });
+});
