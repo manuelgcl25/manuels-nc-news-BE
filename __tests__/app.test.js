@@ -378,3 +378,31 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("GET /api/articles?sort_by=''&order=''", () => {
+  test("status 200: Responds with articles sorted by default column (created_at) and default order (desc)", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).toBe(3);
+        expect(body.articles[body.articles.length - 1].article_id).toBe(9);
+      });
+  });
+  test("status 400: when passed an invalid sort query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=hello&order=desc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid sorting field");
+      });
+  });
+  test("status 400: when passed an invalid order query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=hello")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid sorting field");
+      });
+  });
+});
