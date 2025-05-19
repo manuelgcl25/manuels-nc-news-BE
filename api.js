@@ -11,6 +11,9 @@ const {
   deleteCommentById,
   getUsers,
 } = require("./controllers/api.controller");
+const cors = require("cors");
+
+app.use(cors());
 
 app.use(express.json());
 
