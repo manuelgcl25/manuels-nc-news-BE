@@ -204,7 +204,7 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe.only("POST /api/articles/:article_id/comments", () => {
+describe("POST /api/articles/:article_id/comments", () => {
   test("201: Responds with a 201 status and responds with newly posted comment", () => {
     const postObj = {
       username: "rogersop",
@@ -259,6 +259,49 @@ describe.only("POST /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Comment body empty");
+      });
+  });
+});
+
+describe.only("PATCH /api/articles/:article_id", () => {
+  test("200: Responds with an updated article object with the right properties", () => {
+    const updateObj = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/articles/5")
+      .send(updateObj)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          author: "rogersop",
+          title: "UNCOVERED: catspiracy to bring down democracy",
+          article_id: 5,
+          body: "Bastet walks amongst us, and the cats are taking arms!",
+          topic: "cats",
+          created_at: "2020-08-03T13:14:00.000Z",
+          votes: 5,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test("404: Responds with 'Article not found' if article does not exist", () => {
+    const updateObj = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/articles/500000")
+      .send(updateObj)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article not found");
+      });
+  });
+  test("400: Responds with 'Invalid votes format' if vote increment is not a number", () => {
+    const updateObj = { inc_votes: "5" };
+    return request(app)
+      .patch("/api/articles/5")
+      .send(updateObj)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid votes format");
       });
   });
 });
