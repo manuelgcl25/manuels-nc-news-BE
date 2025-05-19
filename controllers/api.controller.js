@@ -7,6 +7,7 @@ const {
   selectArticleComments,
   insertArticleComment,
   updateArticleById,
+  removeCommentById,
 } = require("../models/apis.model");
 
 async function getApis(req, res, next) {
@@ -96,6 +97,16 @@ async function patchArticleById(req, res, next) {
   }
 }
 
+async function deleteCommentById(req, res, next) {
+  try {
+    const { comment_id } = req.params;
+    await removeCommentById(comment_id);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getApis,
   getTopics,
@@ -104,4 +115,5 @@ module.exports = {
   getArticleComments,
   postArticleComment,
   patchArticleById,
+  deleteCommentById,
 };
