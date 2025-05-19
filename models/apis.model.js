@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { sort } = require("../db/data/test-data/articles");
 
 async function selectTopics() {
   const { rows } = await db.query(`SELECT * FROM topics`);
@@ -20,8 +21,24 @@ async function selectArticleById(articleId) {
   return rows;
 }
 
-async function selectArticles() {
-  const { rows } = await db.query(`
+async function selectArticles(sortBy = "created_at", order = "desc") {
+  const allowedSorts = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+  ];
+  const allowedOrder = ["asc", "desc"];
+  if (
+    !allowedSorts.includes(sortBy) ||
+    !allowedOrder.includes(order.toLowerCase())
+  ) {
+    return Promise.reject({ status: 400, msg: "Invalid sorting field" });
+  }
+  const { rows } = await db.query(
+    `
     SELECT articles.author, 
     articles.title, 
     articles.article_id, 
@@ -35,9 +52,9 @@ async function selectArticles() {
     comments ON articles.article_id = comments.article_id
     GROUP BY 
     articles.article_id
-    ORDER BY created_at DESC;
-    `);
-
+    ORDER BY ${sortBy} ${order};
+    `
+  );
   return rows;
 }
 
