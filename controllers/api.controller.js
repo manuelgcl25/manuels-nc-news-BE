@@ -8,6 +8,7 @@ const {
   insertArticleComment,
   updateArticleById,
   removeCommentById,
+  selectUsers,
 } = require("../models/apis.model");
 
 async function getApis(req, res, next) {
@@ -107,6 +108,15 @@ async function deleteCommentById(req, res, next) {
   }
 }
 
+async function getUsers(req, res, next) {
+  try {
+    const users = await selectUsers();
+    res.status(200).send({ users });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getApis,
   getTopics,
@@ -116,4 +126,5 @@ module.exports = {
   postArticleComment,
   patchArticleById,
   deleteCommentById,
+  getUsers,
 };
