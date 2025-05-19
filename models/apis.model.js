@@ -95,6 +95,17 @@ async function removeCommentById(commentId) {
   return rows[0];
 }
 
+async function selectUsers() {
+  const { rows } = await db.query(`SELECT * FROM users;`);
+  if (!rows.length) {
+    return Promise.reject({
+      status: 404,
+      msg: `No users found`,
+    });
+  }
+  return rows;
+}
+
 module.exports = {
   selectTopics,
   selectArticleById,
@@ -103,4 +114,5 @@ module.exports = {
   insertArticleComment,
   updateArticleById,
   removeCommentById,
+  selectUsers,
 };
