@@ -21,7 +21,11 @@ async function selectArticleById(articleId) {
   return rows;
 }
 
-async function selectArticles(sortBy = "created_at", order = "desc") {
+async function selectArticles(
+  sortBy = "created_at",
+  order = "desc",
+  topic = null
+) {
   const allowedSorts = [
     "author",
     "title",
@@ -37,9 +41,8 @@ async function selectArticles(sortBy = "created_at", order = "desc") {
   ) {
     return Promise.reject({ status: 400, msg: "Invalid sorting field" });
   }
-  const { rows } = await db.query(
-    `
-    SELECT articles.author, 
+
+  let queryString = `SELECT articles.author, 
     articles.title, 
     articles.article_id, 
     articles.topic, 
@@ -49,12 +52,26 @@ async function selectArticles(sortBy = "created_at", order = "desc") {
     COUNT(comments.comment_id)::INT AS comment_count 
     FROM articles
     JOIN
-    comments ON articles.article_id = comments.article_id
-    GROUP BY 
+    comments ON articles.article_id = comments.article_id`;
+
+  const queryParams = [];
+
+  if (topic) {
+    queryParams.push(topic);
+    queryString += ` WHERE articles.topic = $1`;
+  }
+
+  queryString += ` GROUP BY 
     articles.article_id
-    ORDER BY ${sortBy} ${order};
-    `
-  );
+    ORDER BY ${sortBy} ${order};`;
+
+  const { rows } = await db.query(queryString, queryParams);
+  if (rows.length === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: "No articles found for those filters",
+    });
+  }
   return rows;
 }
 
