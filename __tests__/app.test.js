@@ -407,7 +407,7 @@ describe("GET /api/articles?sort_by=''&order=''", () => {
   });
 });
 
-describe("GET /api/articles?topic=''", () => {
+describe.only("GET /api/articles?topic=''", () => {
   test("status 200: Responds with a list of articles of the URL topic", () => {
     return request(app)
       .get("/api/articles?topic=cats")
@@ -425,6 +425,15 @@ describe("GET /api/articles?topic=''", () => {
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           comment_count: 2,
         });
+      });
+  });
+  test("status 200: Responds with a list of articles of the URL topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.articles);
+        expect(body.articles).toHaveLength(12);
       });
   });
   test("status 404: when topic does not exist in out db", () => {
