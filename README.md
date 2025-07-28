@@ -2,6 +2,10 @@ A hosted version of this project can be found here: https://manuels-nc-news.onre
 
 # Summary
 
+This project creates the backend foundations for a website whose main theme is news, upon which the frontend project (https://github.com/manuelgcl25/manuel-news/blob/main/README.md) will be built.
+
+This has meant structuring databases using SQL, building servers and APIs.
+
 This project is a simple resftul API which uses Node.js, PostgreSQL and both Supabase and Render for hosting.
 It also makes use of a GitHub actions to continuously integrate any commits as long as tests are still passing.
 
